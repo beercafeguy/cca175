@@ -1,0 +1,74 @@
+//EVAL
+
+sqoop eval \
+--connect jdbc:mysql://ms1.beercafeguy.com:3306/retail_db \
+--username sqoopuser \
+--password sqoop \
+--query "select count(*) from customers"
+
+//list tables
+
+sqoop list-tables \
+--connect jdbc:mysql://ms1.beercafeguy.com:3306/retail_db \
+--username sqoopuser \
+-P
+
+//import data
+sqoop import \
+--connect jdbc:mysql://ms1.beercafeguy.com:3306/retail_db \
+--username sqoopuser \
+--table categories \
+--target-dir /user/beercafeguy/data/cca175_retail/categories \
+-P
+
+//change delimiter from comma (,) to pipe (|)
+
+sqoop import \
+--connect jdbc:mysql://ms1.beercafeguy.com:3306/retail_db \
+--username sqoopuser \
+--table categories \
+--target-dir /user/beercafeguy/data/cca175_retail/categories_pipe \
+--fields-terminated-by '|' \
+-P
+
+
+
+// import as avro data file
+sqoop import \
+--connect jdbc:mysql://ms1.beercafeguy.com:3306/retail_db \
+--username sqoopuser \
+--table categories \
+--target-dir /user/beercafeguy/data/cca175_retail/categories_avro \
+--as-avrodatafile \
+-P
+
+
+//checking in hive
+create table categories_avro(category_id int,category_department_id int,category_name string)
+stored as avro;
+
+hadoop fs -cp /user/beercafeguy/data/cca175_retail/categories_avro/* /user/hive/warehouse/beercafeguy.db/categories_avro/
+
+
+// import as avro data file
+sqoop import \
+--connect jdbc:mysql://ms1.beercafeguy.com:3306/retail_db \
+--username sqoopuser \
+--table customers \
+--warehouse-dir /user/beercafeguy/data/cca175_retail/ \
+--as-parquetfile \
+-P
+
+
+//change mappers to one
+sqoop import \
+--connect jdbc:mysql://ms1.beercafeguy.com:3306/retail_db \
+--username sqoopuser \
+--table customers \
+--target-dir /user/beercafeguy/data/cca175_retail/customers_m1 \
+--as-parquetfile \
+--m 1 \
+-P
+
+
+hadoop fs -ls /user/beercafeguy/data/cca175_retail/customers_m1/
