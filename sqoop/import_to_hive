@@ -1,0 +1,38 @@
+//import data
+sqoop import \
+--connect jdbc:mysql://ms.beercafeguy.com:3306/retail_db \
+--username sqoopuser \
+--hive-import \
+--hive-database beercafeguy \
+--hive-table customers \
+--as-parquetfile \
+--table customers \
+--create-hive-table \
+-P
+
+
+sqoop import \
+--connect "jdbc:mysql://ms.beercafeguy.com:3306/retail_db" \
+--username sqoopuser \
+--password sqoop \
+--driver "com.mysql.jdbc.Driver" \
+--hive-import \
+--hive-database beercafeguy \
+--hive-table customers_test_hive \
+--hive-overwrite \
+--table customers
+
+
+
+sqoop import-all-tables \
+-D hive.metastore.uris=thrift://ms.hms.beercafeguy.com:9083 \
+--num-mappers 1 \
+--connect "jdbc:mysql://ms.beercafeguy.com:3306/retail_db" \
+--username=sqoopuser \
+--password=sqoop \
+--hive-import \
+--hive-overwrite \
+--hive-database beercafeguy \
+--create-hive-table \
+--as-parquetfile \
+  
