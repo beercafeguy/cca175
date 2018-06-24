@@ -98,3 +98,34 @@ sqoop import \
 -P 
 
 
+sqoop import \
+--connect jdbc:mysql://ms1.beercafeguy.com:3306/retail_db \
+--username sqoopuser \
+--query "select customer_id,customer_fname,customer_lname,customer_state from customers where \$CONDITIONS" \
+--split-by customer_state \
+--m 2 \
+--target-dir /user/beercafeguy/data/cca175_retail/customers_state \
+--delete-target-dir \
+--fields-terminated-by '|' \
+-P 
+
+
+//with compression
+
+sqoop import \
+--connect jdbc:mysql://ms1.beercafeguy.com:3306/retail_db \
+--username sqoopuser \
+--query "select customer_id,customer_fname,customer_lname,customer_state from customers where \$CONDITIONS" \
+--split-by "customer_id" \
+--target-dir /user/beercafeguy/data/cca175_retail/customers_state_comp \
+--delete-target-dir \
+--fields-terminated-by '|' \
+--compress \
+--compression-codec "org.apache.hadoop.io.compress.GzipCodec" \
+-P 
+
+
+
+
+
+
