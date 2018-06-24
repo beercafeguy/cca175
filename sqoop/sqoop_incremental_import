@@ -1,0 +1,118 @@
+//base import in text form 
+
+sqoop import \
+--connect jdbc:mysql://ms1.beercafeguy.com:3306/retail_db \
+--username sqoopuser \
+--table customers_bkp \
+--m 1 \
+--target-dir /user/beercafeguy/data/cca175_retail/customers_bkp \
+--fields-terminated-by '|' \
+-P 
+
+insert into customers_bkp values (12436,"Hem","Chandra","XXXXXXXXX","XXXXXXXXX","A701- HD Street","Bangalore","KA","560023")
+
+//append import
+sqoop import \
+--connect jdbc:mysql://ms1.beercafeguy.com:3306/retail_db \
+--username sqoopuser \
+--table customers_bkp \
+--m 1 \
+--target-dir /user/beercafeguy/data/cca175_retail/customers_bkp \
+--check-column customer_id \
+--incremental append \
+--last-value 12435 \
+--fields-terminated-by '|' \
+-P 
+
+
+create table customer_ts(
+customer_id int,
+customer_fname varchar(100),
+customer_lname varchar(100),
+createdon timestamp not null DEFAULT now(),
+modifiedon timestamp not null default now() on update now()
+)
+
+insert into customer_ts (customer_id,customer_fname,customer_lname)
+values (1,"Hem","Chandra")
+
+insert into customer_ts (customer_id,customer_fname,customer_lname)
+values (2,"Aman","Chauhan")
+
+
+
+sqoop import \
+--connect jdbc:mysql://ms1.beercafeguy.com:3306/retail_db \
+--username sqoopuser \
+--table customer_ts \
+--m 1 \
+--target-dir /user/beercafeguy/data/cca175_retail/customer_ts \
+--fields-terminated-by '|' \
+-P 
+
+update customer_ts 
+set customer_lname="Thuwal"
+where customer_id=1;
+
+//lastmodified import
+sqoop import \
+--connect jdbc:mysql://ms1.beercafeguy.com:3306/retail_db \
+--username sqoopuser \
+--table customer_ts \
+--m 1 \
+--target-dir /user/beercafeguy/data/cca175_retail/customer_ts \
+--check-column modifiedon \
+--incremental lastmodified \
+--last-value '2018-06-24 14:37:13' \
+--fields-terminated-by '|' \
+--merge-key customer_id \
+-P 
+
+
+insert into customer_ts (customer_id,customer_fname,customer_lname)
+values (3,"Ankur","Das")
+
+
+sqoop import \
+--connect jdbc:mysql://ms1.beercafeguy.com:3306/retail_db \
+--username sqoopuser \
+--table customer_ts \
+--m 1 \
+--target-dir /user/beercafeguy/data/cca175_retail/customer_ts \
+--check-column modifiedon \
+--incremental lastmodified \
+--last-value '2018-06-24 14:46:47.0' \
+--fields-terminated-by '|' \
+--merge-key customer_id \
+-P
+
+
+
+// increment in parquet file format
+
+sqoop import \
+--connect jdbc:mysql://ms1.beercafeguy.com:3306/retail_db \
+--username sqoopuser \
+--table customer_ts \
+--m 1 \
+--target-dir /user/beercafeguy/data/cca175_retail/customer_ts_par \
+--as-parquetfile \
+-P 
+
+update customer_ts 
+set customer_lname="Pandey"
+where customer_id=3;
+
+//lastmodified import
+sqoop import \
+--connect jdbc:mysql://ms1.beercafeguy.com:3306/retail_db \
+--username sqoopuser \
+--table customer_ts \
+--m 1 \
+--target-dir /user/beercafeguy/data/cca175_retail/customer_ts_par \
+--check-column modifiedon \
+--incremental lastmodified \
+--last-value '2018-06-24 14:49:35' \
+--as-parquetfile \
+--merge-key customer_id \
+-P 
