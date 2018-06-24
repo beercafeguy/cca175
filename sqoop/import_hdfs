@@ -72,3 +72,29 @@ sqoop import \
 
 
 hadoop fs -ls /user/beercafeguy/data/cca175_retail/customers_m1/
+
+
+//importing with a condition 
+sqoop import \
+--connect jdbc:mysql://ms1.beercafeguy.com:3306/retail_db \
+--username sqoopuser \
+--table customers \
+--m 2 \
+--target-dir /user/beercafeguy/data/cca175_retail/customers_pr \
+--where "customer_state='PR'" \
+-P 
+
+
+//selected columns
+sqoop import \
+--connect jdbc:mysql://ms1.beercafeguy.com:3306/retail_db \
+--username sqoopuser \
+--table customers \
+--columns customer_id,customer_fname,customer_lname,customer_state \
+--m 2 \
+--target-dir /user/beercafeguy/data/cca175_retail/customers_pr_column \
+--fields-terminated-by '|' \
+--where "customer_state='PR'" \
+-P 
+
+
