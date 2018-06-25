@@ -67,3 +67,17 @@ sqoop export \
 --table categories_avro \
 --num-mappers 2 \
 -P
+
+
+//using staging table for safe export
+create table stg_categories(category_id int,category_department_id int,category_name varchar(50));
+
+sqoop export \
+--connect jdbc:mysql://ms.beercafeguy.com:3306/retail_export \
+--username sqoopuser \
+--export-dir /user/beercafeguy/data/cca175_retail/categories_avro/ \
+--table categories_avro \
+--staging-table stg_categories \
+--clear-staging-table \
+--num-mappers 2 \
+-P
