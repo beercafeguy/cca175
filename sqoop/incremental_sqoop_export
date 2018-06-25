@@ -1,0 +1,37 @@
+create table categories(category_id int,category_department_id int,category_name varchar(50));
+
+//simple text export
+
+sqoop export \
+--connect jdbc:mysql://ms.beercafeguy.com:3306/retail_export \
+--username sqoopuser \
+--export-dir /user/beercafeguy/data/retail_db/categories/ \
+--table categories \
+--input-fields-terminated-by ',' \
+--num-mappers 2 \
+-P
+
+
+// added new record in source file in HDFS
+sqoop export \
+--connect jdbc:mysql://ms.beercafeguy.com:3306/retail_export \
+--username sqoopuser \
+--export-dir /user/beercafeguy/data/retail_db/categories/ \
+--table categories \
+--input-fields-terminated-by ',' \
+--update-mode updateonly \
+--update-key category_id \
+--num-mappers 2 \
+-P
+
+
+sqoop export \
+--connect jdbc:mysql://ms.beercafeguy.com:3306/retail_export \
+--username sqoopuser \
+--export-dir /user/beercafeguy/data/retail_db/categories/ \
+--table categories \
+--input-fields-terminated-by ',' \
+--update-mode allowinsert \
+--update-key category_id \
+--num-mappers 2 \
+-P
