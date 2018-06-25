@@ -27,3 +27,30 @@ sqoop export \
 --input-fields-terminated-by ',' \
 --num-mappers 2 \
 -P
+
+
+//transfering selected columns from source data
+
+sqoop export \
+--connect jdbc:mysql://ms.beercafeguy.com:3306/retail_export \
+--username sqoopuser \
+--export-dir /user/beercafeguy/data/retail_db/categories/ \
+--table categories_4col \
+--columns category_id \
+--input-fields-terminated-by ',' \
+--num-mappers 2 \
+-P
+
+
+//exporting parquet data
+
+create table categories_parquet(category_id int,category_department_id int,category_name varchar(50));
+
+sqoop export \
+--connect jdbc:mysql://ms.beercafeguy.com:3306/retail_export \
+--username sqoopuser \
+--export-dir /user/beercafeguy/data/retail_db/categories_parquet/ \
+--table categories_parquet \
+--num-mappers 2 \
+-P
+
