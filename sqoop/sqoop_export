@@ -54,3 +54,16 @@ sqoop export \
 --num-mappers 2 \
 -P
 
+
+
+//exporting avro data
+
+create table categories_avro(category_id int,category_department_id int,category_name varchar(50));
+
+sqoop export \
+--connect jdbc:mysql://ms.beercafeguy.com:3306/retail_export \
+--username sqoopuser \
+--export-dir /user/beercafeguy/data/cca175_retail/categories_avro/ \
+--table categories_avro \
+--num-mappers 2 \
+-P
