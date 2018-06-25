@@ -10,3 +10,20 @@ sqoop export \
 --input-fields-terminated-by ',' \
 --num-mappers 2 \
 -P
+
+
+//export less number of columns then available in table
+//extra column will have null value
+//missong column can be present in the middle as well
+
+create table categories_4col(category_id int,category_department_id int,extra_column varchar(20),category_name varchar(50));
+
+sqoop export \
+--connect jdbc:mysql://ms.beercafeguy.com:3306/retail_export \
+--username sqoopuser \
+--export-dir /user/beercafeguy/data/retail_db/categories/ \
+--table categories_4col \
+--columns category_id,category_department_id,category_name \
+--input-fields-terminated-by ',' \
+--num-mappers 2 \
+-P
