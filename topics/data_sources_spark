@@ -1,0 +1,39 @@
+//default data format for spark is parquet
+
+sqlContext.format("-----").
+	option(key,value).
+	schema(StructType[]).
+	load("location")
+
+or
+
+sqlContext.read.{csv,avro,json,parquet}
+
+
+//writing data
+sqlContext.format("-----").
+	option(key,value).
+	schema(StructType[]).
+	save("location")
+
+or
+
+sqlContext.write.{csv,avro,json,parquet}
+
+retailDataDF.write.partitionBy("Country").parquet("/user/beercafeguy/data/sdg/order_details_part/")
+
+//read from data source
+spark-shell \
+--driver-class-path "jar path" \
+--jars "jar patg" \
+
+
+val dbDataFrame = spark.read.format("jdbc").option("url", url)
+  .option("dbtable", tablename).option("driver",  driver).load()
+
+//reading from databases in parallel
+option("numPartitions", 10)
+
+
+partitionBy("column name")
+bycketBy(no_of_bucket,bucket_column)
