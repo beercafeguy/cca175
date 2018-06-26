@@ -1,0 +1,63 @@
+val person = Seq(
+(0, "Hem Chandra", 0, Seq(100)),
+(1, "AMan Chauhan", 1, Seq(500, 250, 100)),
+(2, "Michael Armbrust", 1, Seq(250, 100))).
+toDF("id", "name", "graduate_program", "spark_status")
+
+
+val graduateProgram = Seq(
+    (0, "Masters", "School of Information", "DIT Dehradun"),
+    (2, "Masters", "EECS", "UC Berkeley"),
+    (1, "Ph.D.", "EECS", "UC Berkeley")).
+toDF("id", "degree", "department", "school")
+
+
+val sparkStatus = Seq(
+    (500, "Vice President"),
+    (250, "PMC Member"),
+    (100, "Contributor")).
+toDF("id", "status")
+
+
+
+
+//inner join
+val joinExpr=person.col("graduate_program") === graduateProgram.col("id")
+val joinType="inner"
+val joined=person.join(graduateProgram,joinExpr,joinType)
+
+//outer join or full outer join
+val joinExpr=person.col("graduate_program") === graduateProgram.col("id")
+val joinType="outer"
+val joined=person.join(graduateProgram,joinExpr,joinType)
+
+//left outer join
+val joinExpr= graduateProgram.col("id") === person.col("graduate_program")
+val joinType="left_outer"
+val joined=graduateProgram.join(person,joinExpr,joinType)
+
+//right outer join
+val joinExpr=person.col("graduate_program") === graduateProgram.col("id")
+val joinType="right_outer"
+val joined=person.join(graduateProgram,joinExpr,joinType)
+
+//left semi join
+val joinExpr=person.col("graduate_program") === graduateProgram.col("id")
+val joinType="left_semi"
+val joined=person.join(graduateProgram,joinExpr,joinType)
+
+
+//left anti join
+
+val joinExpr=person.col("graduate_program") === graduateProgram.col("id")
+val joinType="left_anti"
+val joined=person.join(graduateProgram,joinExpr,joinType)
+
+//cross join
+val joinType="cross" //not supprtted in 1.6
+
+
+//broad cast joins
+val joinExpr=person.col("graduate_program") === graduateProgram.col("id")
+val joinType="inner"
+val joined=person.join(broadcast(graduateProgram),joinExpr,joinType)
