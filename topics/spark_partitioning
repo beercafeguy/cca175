@@ -1,0 +1,45 @@
+$SPARK_HOME/bin/spark-shell \
+--jars /user/beercafeguy/cca175/jar/commons-csv-1.5.jar \
+--num-executors 5
+
+val words= sc.parallelize("""we just sum all values for each partiton and sum the partition values 
+	But with averages, it’s not that simple, an average of averages is not the same as taking an 
+	average across all numbers. But we can collect the total number scores and total score per partition 
+	then divide the total overall score by the number of scores""".split(" "))
+
+
+words.coalesce(1).partitions.length //collapsing partions in same machine
+
+words.repartition(1).partitions.length
+words.repartition(5).partitions.length //can increase or decrease number of partitions but requires shuffle
+
+
+repartitionAndSortWithinPartitions(partitioner, num of partitions)
+
+
+Custom partitioner
+
+HashPartitioner //descrete values
+RangePartitioner //continuous values
+
+import org.apache.spark.HashPartitioner
+import org.apache.spark.RangePartitioner
+
+val nums=sc.range(1,1000)
+
+
+class CustomerPArtitioner extends Partitioner{
+
+	def numOfPArtitions=3
+	def getPArtition(key:Any):Int={
+		val customerId=key.asInstanceOf[Double].toInt
+		if(customerId == 12345 || customerId == 12344){
+			return 0
+		}else {
+			return new java.util.Random().nextInt(2)+1
+		}
+	}
+}
+
+rdd.partitionBy(new CustomerPArtitioner)
+
