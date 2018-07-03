@@ -1,0 +1,52 @@
+$SPARK_HOME/bin/spark-shell \
+--jars /user/beercafeguy/cca175/jar/commons-csv-1.5.jar \
+--num-executors 5
+
+val words=sc.parallelize("""There are many methods on RDDs that require you 
+to put your data in a key–value format. A hint
+ that this is required is that the method will include""".split(" "))
+
+val wordsRDD=words.map(_.replace(".",""))
+
+val wordsMap=wordsRDD.map(word => (word.toLowerCase,1))
+wordsMap.countByKey
+
+wordsRDD.keyBy(word => word.toLowerCase.toSeq(0).toString)
+wordsMap.mapValues(x => x*x).take(10).foreach(println)
+
+wordsMap.flatMapValues(x => 1 to x+2).take(10).foreach(println)
+
+val chars=words.flatMap(_.toLowerCase.toSeq)
+val charPair=chars.map(c => (c,new scala.util.Random().nextLong))
+
+val charMap=charPair.map(x => (x._1,1))
+
+charMap.take(10).foreach(println)
+
+def maxFun(left:Int,right:Int) = math.max(left,right)
+def addFun(left:Int,right:Int) = left + right 
+
+val nums=sc.parallelize(1 to 30,5)
+
+
+//finding words count 
+wordsMap.groupByKey().map(grp => (grp._1,grp._2.reduce(addFun))).filter(w => w._2>1).take(10).foreach(println)
+
+//count by reduceByKey
+charMap.reduceByKey(addFun).filter(w => w._2).take(10).foreach(println)
+
+rdd.aggregate and treeAggregate
+fold
+aggregate
+
+
+val marks=sc.parallelize(Seq(("Hem",95),("Aman",89),("Hem",74),("Aman",84),("Hem",59),("Ajay",100),("Ajay",98)))
+
+def createMarksCombiner(value:Int): (Int,Int)=(value,1)
+def combinerFun(acc:(Int,Int),value:Int)=(acc._1+value,acc._2+1)
+def mergerFun(acc1:(Int,Int),acc2:(Int,Int))=(acc1._1+acc2._1,acc1._2+acc2._2)
+
+marks.combineByKey(createMarksCombiner,combinerFun,mergerFun).map(r => (r._1,r._2._1/r._2._2)).take(5).foreach(println)
+
+
+
