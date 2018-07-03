@@ -1,0 +1,14 @@
+$SPARK_HOME/bin/spark-shell \
+--jars /user/beercafeguy/cca175/jar/commons-csv-1.5.jar \
+--num-executors 5
+
+val r1=sc.parallelize(Seq(("key1",2),("key2",3),("key1",4)))
+val r2=sc.parallelize(Seq(("key1",9),("key2",6)))
+
+scala> val cogrouped=r1.cogroup(r2)
+cogrouped: org.apache.spark.rdd.RDD[(String, (Iterable[Int], Iterable[Int]))] = MapPartitionsRDD[15] at cogroup at <console>:31
+
+scala> cogrouped.collect
+res7: Array[(String, (Iterable[Int], Iterable[Int]))] = Array((key1,(CompactBuffer(2, 4),CompactBuffer(9))), (key2,(CompactBuffer(3),CompactBuffer(6))))
+
+
