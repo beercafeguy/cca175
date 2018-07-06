@@ -45,3 +45,38 @@ rdd.partitionBy(new CustomerPArtitioner)
 
 
 //new partition will be discussed in project
+
+import org.apache.spark.HashPartitioner
+
+val data=Seq((1,1),(2,4),(3,9),(4,16),(9,81))
+val rdd=sc.parallelize(data).partitionBy(new HashPartitioner(4))
+
+scala> rdd.partitioner
+res17: Option[org.apache.spark.Partitioner] = Some(org.apache.spark.HashPartitioner@4)
+
+scala> rdd.partitions.size
+res18: Int = 4
+
+
+rdd.foreachPartition(it =>{
+println("Partition:")
+it.foreach(t => t.toString)
+println()	
+})
+
+
+
+val rdd = sc.parallelize(for {
+x <- 1 to 3
+y <- 1 to 2
+} yield (x, None), 8)
+
+rdd.take(10).foreach(println)
+
+//function to get num of elements per partition.
+import org.apache.spark.rdd.RDD
+def getNumPerPartition(rdd:RDD[(Int,None.type)]){
+rdd.mapPartitions( iter => Iterator(iter.length))
+}
+
+
